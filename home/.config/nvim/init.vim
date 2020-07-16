@@ -1,22 +1,38 @@
 
-if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+let vimplug_exists=expand('~/.config/nvim/autoload/plug.vim')
+if !filereadable(vimplug_exists)
+  if !executable("curl")
+    echoerr "You have to install curl or first install vim-plug yourself!"
+    execute "q!"
+  endif
+  echo "Installing Vim-Plug..."
+  echo ""
+  silent !\curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  let g:not_finish_vimplug = "yes"
+
+  autocmd VimEnter * PlugInstall
 endif
 
 set rtp+=~/.fzf
 nnoremap <silent> <C-P> :Files<CR>
 
-call plug#begin('~/.vim/plugged')
-Plug 'tpope/vim-sensible'
+call plug#begin('$HOME/.local/share/nvim/plugged')
 Plug 'junegunn/fzf.vim'
 Plug 'myusuf3/numbers.vim'
-Plug 'vim-perl/vim-perl', { 'for': 'perl', 'do': 'make clean carp dancer highlight-all-pragmas moose test-more try-tiny' }
-Plug 'tomasr/molokai'
+Plug 'joshdick/onedark.vim'
+Plug 'sheerun/vim-polyglot'
 call plug#end()
 
-colorscheme molokai
+" Add some colors
+colorscheme onedark
+if (has("nvim"))
+  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+endif
+if (has("termguicolors"))
+  set termguicolors
+endif
+
+
 set pastetoggle=<F2>
 
 " allows cursor change in tmux mode
